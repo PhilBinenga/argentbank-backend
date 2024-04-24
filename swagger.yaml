@@ -101,112 +101,112 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
-                    #! transaction module 
-#! Récupération des transactions du mois 
+#! Transaction module
   /user/transactions:
     get:
       security:
         - Bearer: []
-          tags: 
-          - Transactions modules
-          summary: Get monthly transactions
-          description: Retrieve transactions for the month
-          responses:
-          '200': 
+      tags: 
+        - Transactions modules
+      summary: Get monthly transactions
+      description: Retrieve transactions for the month
+      produces:
+        - application/json
+      responses:
+        '200': 
           description: Success. Returns the list of transactions for the month
           schema: 
-          $ref: '#/definitions/TransactionResponse'
-          '400':
+            $ref: '#/definitions/TransactionResponse'
+        '400':
           description: Invalid request
-          '500': 
+        '500': 
           description: Internal Server Error
-
-          #! Récupération d'une transaction spécifique
+  #! Récupération d'une transaction spécifique
   /user/transactions/{transactionId}:
-          get:
-          security:
-          - Bearer: []
-          tags:
-          - Transactions modules
-          summary: Get specific transaction details 
-          description: Retrieve a specific transaction detail
-          parameters:
-          -in: path
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Get specific transaction details
+      description: Retrieve a specific transaction detail
+      parameters:
+        - in: path
           name: transactionId
-          description: unique Id
-          required: trye
+          description: Unique ID of transaction 
+          required: true
           type: string
-          produces:
-       
-          responses: 
-          '200': 
+      responses:
+        '200':
           description: Sucess. Retrieve specific detail transaction
-          schema: 
-          $ref: '#/definitions/TransactionApiResponse'
-          '400': 
+          schema:
+            $ref: '#/definitions/TransactionApiResponse'
+        '400':
           description: Invalid request
-          '500': 
+        '500':
           description: Internal Server Error
-
-  #! Ajout d'une catégorie ou d'une note à la transaction
-
+#! Ajout d'une catégorie ou d'une note à la transaction
   /user/transactions/{transactionId}/{item}:
-          post: 
-          security:
-          - Bearer: []
-          tags: 
-          -Transaction modules
-          summary: add category or note to a transaction
-          parameters:
-          - in: path
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: add category or note to a transaction
+      description: add category or note to a transaction
+      parameters:
+        - in: path
           name: transactionId
-          description: unique Id
+          description: Unique ID 
           required: true
           type: string
-          - in: body
-          name: body
-          description: New category and information note for the transaction
+        - in: path
+          name: item
+          description: Category or note
           required: true
-          schema: 
-          $ref: '#/definitions/TransactionCategory'
-          responses: 
-          '200': 
+          type: string
+        - in: body
+          name: body
+          description: new category or information for the transaction
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionCategory'  
+      responses:
+        '200':
           description: Sucess. the category or note are added.
-          schema: 
-          $ref: '#/definitions/ApiResponse'
-          '400':
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
           description: Invalid request
-          '500': 
-          description: Internal Server Errror
-          #! Supprimer une note d'une transaction 
+        '500':
+          description: Internal Server Error
+#! Supprimer une note d'une transaction
   /user/transactions/{transactionId}/notes/{noteId}:
     delete:
-      security: 
-      - Bearer: []
+      security:
+        - Bearer: []
       tags:
-      - Transaction module
-      summary: Delete a transaction's note
-      description: Delete a specific transaction note
+        - Transactions Module
+      summary: 
+        Delete a transaction's note
       parameters:
-      - in: path
-      name: transactionId
-      description: Unique Id of the transaction
-      required: true
-      type: string
-      - in: path
-      name: noteId
-      description: unique note Id to be deleted
-      required: true
-      type: string
-      responses: 
-      '200':
-      description: Success. Note is deleted
-      schema: 
-      $ref: '#/definitions/ApiResponse'
-      '400':
-      description: Invalid Request
-      '500':
-      description: Internal Server Error
+        - in: path
+          name: transactionId
+          description: Unique Id of the transaction
+          required: true
+          type: string
+          name: noteId
+          description: unique noteId to be deleted
+          required: true
+      responses:
+        '200':
+          description: Success. Note is deleted
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Request
+        '500':
+          description: Internal Server Error
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -262,7 +262,7 @@ definitions:
     properties:
       userName:
         type: string
-        #! Definition de la réponse pour la liste de transaction
+#! Definition de la réponse pour liste des transactions
   TransactionsResponse:
     type: object
     properties:
@@ -270,49 +270,48 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/TransactionApiResponse'
-#! Réponse de l'Api pour la transaction individuelle
-  TransactionApiResponse:
+#! Reponse de l'Api pour la transaction individuelle
+  TransactionsApiResponse:
     type: object
-    properties: 
-      transactionId: 
+    properties:
+      transactionId:
+        type: string
+      date:
         type: string
         format: date
-        description: Date of the transaction
+        description: Transaction's date
       description:
-         type: string
-         description: Description of the transaction
+        type: string
+        description: Transaction's description
       amount:
         type: number
-        description: Amount of the transaction 
-      balance:
-        type: number
-        description: Balance after the transaction
+        decription: Transaction's amount
       type:
         type: string
-        description: Type of the transaction
-      category:
+        description: Transaction's type
+      category: 
         type: string
-        description: Category of the transaction
+        description: Transaction's category
       note:
         type: string
         description: Note associated with the transaction
-  #! Structure des catégories et des notes d'une transaction
+#! Structure des catégories et des notes d'une transaction
   TransactionCategory:
     type: object
-    properties:
-      category:
+    properties: 
+      category: 
         type: string
       note:
         type: string
-  #! Reponse de l'api pour la catégorie
+#! Réponse de l'Api pour une catégorie
   CategoryApiResponse:
     type: object
     properties:
-      status:
+      status: 
         type: integer
       message:
         type: string
-  #! Reponse de l'api pour la note
+#! Réponse de l'Api pour une note
   NoteApiResponse:
     type: object
     properties:
@@ -321,5 +320,5 @@ definitions:
       message:
         type: string
 
-    
-  
+
+
